@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Home on Jacob Adkins&#39;s Blog</title>
+    <link>/</link>
+    <description>Recent content in Home on Jacob Adkins&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 06 Feb 2018 14:18:37 -0600</lastBuildDate>
+    
+	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Moving to Hugo</title>
+      <link>/post/2018/02/06/moving-to-hugo/</link>
+      <pubDate>Tue, 06 Feb 2018 15:42:30 -0600</pubDate>
+      
+      <guid>/post/2018/02/06/moving-to-hugo/</guid>
+      <description>This is an example post made with Hugo.
+123456 // This is a comment #include &amp;lt;stdio.h&amp;gt;int main(void) { puts(&amp;#34;This is some example code&amp;#34;); return 0; }   And this is a list
+ of items to be printed   This is a blockquote should have a background
+ </description>
+    </item>
+    
+    <item>
+      <title>About</title>
+      <link>/about/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/about/</guid>
+      <description>This is the personal blog of Jacob Paul Adkins. I&amp;rsquo;m a programming enthusiast from the DFW area. I generally go by jpadkins online. If you see someone with that name, chances are it&amp;rsquo;s me.
+I&amp;rsquo;ve got a thing for webdev, C, CRPGS, Roguelikes, Film (Mainly 60s art house, 70s exploitation, 80s/90s B-action), old pulp sci-fi, and IRL exploration, so that&amp;rsquo;s what you can expect me to write about. Mostly.</description>
+    </item>
+    
+  </channel>
+</rss>

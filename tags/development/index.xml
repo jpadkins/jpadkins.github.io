@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Development on Jacob Adkins&#39;s Blog</title>
+    <title>Development on jpa.io</title>
     <link>/tags/development/</link>
-    <description>Recent content in Development on Jacob Adkins&#39;s Blog</description>
+    <description>Recent content in Development on jpa.io</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 06 Feb 2018 15:42:30 -0600</lastBuildDate>

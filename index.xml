@@ -12,15 +12,12 @@
     
     
     <item>
-      <title>Moving to Hugo</title>
-      <link>/post/2018/02/06/moving-to-hugo/</link>
-      <pubDate>Tue, 06 Feb 2018 15:42:30 -0600</pubDate>
+      <title>Jpadkins C Style Guidelines</title>
+      <link>/post/2018/02/19/jpadkins-c-style-guidelines/</link>
+      <pubDate>Mon, 19 Feb 2018 19:29:49 -0600</pubDate>
       
-      <guid>/post/2018/02/06/moving-to-hugo/</guid>
-      <description>This is an example post made with Hugo.
-123456 // This is a comment #include &amp;lt;stdio.h&amp;gt;int main(void) { puts(&amp;#34;This is some example code&amp;#34;); return 0; }   And this is a list
- of items to be printed   This is a blockquote should have a background
- </description>
+      <guid>/post/2018/02/19/jpadkins-c-style-guidelines/</guid>
+      <description>Introduction Here I describe a style I like to adhere to when writing C. It borrows a lot from existing styles like Kernel and GNU and tries to incorporate rules from both with an emphasis on readability. Along with syntax guidelines, I also describe a structure for ordering and labelling the contents of source and header files. For anything that I don&amp;rsquo;t specifically cover here, I generally use the Kernel style conventions.</description>
     </item>
     
     <item>
@@ -29,7 +26,7 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>/about/</guid>
-      <description>I&amp;rsquo;m a programming enthusiast from the DFW area. I generally go by jpadkins online. If you see someone with that name, chances are it&amp;rsquo;s me.
+      <description>I&amp;rsquo;m a programming enthusiast from the DFW area. I generally go by jpadkins or jacobpadkins online. If you see someone with that name, there&amp;rsquo;s a good chance it&amp;rsquo;s me.
 I&amp;rsquo;ve got a thing for webdev, Ruby, C, CRPGS, Roguelikes, cult/exploitation/B films, old pulp sci-fi and fantasy novels, comparative mythology, and IRL exploration, so that&amp;rsquo;s what you can expect me to write about. Mostly.
 Q &amp;amp; A Q: Why does your website look like it was designed by someone in the 90s?</description>
     </item>

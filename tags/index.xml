@@ -6,7 +6,7 @@
     <description>Recent content in Tags on jpa.io</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 06 Feb 2018 15:42:30 -0600</lastBuildDate>
+    <lastBuildDate>Mon, 19 Feb 2018 19:29:49 -0600</lastBuildDate>
     
 	<atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,18 +14,9 @@
     <item>
       <title>C</title>
       <link>/tags/c/</link>
-      <pubDate>Tue, 06 Feb 2018 15:42:30 -0600</pubDate>
+      <pubDate>Mon, 19 Feb 2018 19:29:49 -0600</pubDate>
       
       <guid>/tags/c/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Development</title>
-      <link>/tags/development/</link>
-      <pubDate>Tue, 06 Feb 2018 15:42:30 -0600</pubDate>
-      
-      <guid>/tags/development/</guid>
       <description></description>
     </item>
     

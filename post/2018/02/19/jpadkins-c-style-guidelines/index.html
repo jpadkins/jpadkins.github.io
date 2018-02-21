@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Jpadkins C Style Guidelines | jpa.io</title>
+        <link rel="stylesheet" href="/css/style.css"/>
+        <link rel="stylesheet" href="/css/syntax.css"/>
+        
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+        <link rel="manifest" href="/site.webmanifest">
+        <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#0e3a53">
+        <meta name="msapplication-TileColor" content="#2b5797">
+        <meta name="theme-color" content="#f0ede5">
+    </head>
+    <body>
+        <div class="wrapper">
+            <nav>
+                
+                | <a href="/">Home</a>
+                
+                | <a href="/about/">About</a>
+                
+                | <a href="/tags/">Tags</a>
+                
+                | <a href="/index.xml">RSS</a>
+                
+                |
+                <hr/>
+            </nav>
+
+
+<h1 class="title">Jpadkins C Style Guidelines</h1>
+<h4 class="subtitle">Jacob P Adkins | 02-19-2018</h4>
+
+<main>
+
+
+<h2 id="introduction">Introduction</h2>
+
+<p>Here I describe a style I like to adhere to when writing C. It borrows a lot from existing styles like Kernel and GNU and tries to incorporate rules from both with an emphasis on readability. Along with syntax guidelines, I also describe a structure for ordering and labelling the contents of source and header files. For anything that I don&rsquo;t specifically cover here, I generally use the Kernel style conventions.</p>
+
+<p><em>The intent of this post to give me a place to collect and document my thoughts, not an attempt to convince anyone to adopt this style</em>. However, if you do end up trying it out, be sure to let me know of any pain points or areas of improvement you encounter by submitting an issue on this website&rsquo;s <a href="https://github.com/jpadkins/jpa.io_hugo">git repo</a> or by emailing me directly (you can find my email on my <a href="https://github.com/jpadkins/">Github profile</a>.</p>
+
+<p>Also, if you ever catch me breaking my own style guidelines in my c projects please call me out.</p>
+
+<h3 id="general-dos-and-don-ts">General Dos and Don&rsquo;ts</h3>
+
+<ul>
+<li><p>Never used <strong>unsigned</strong> when you can use an <strong>int</strong>.</p></li>
+
+<li><p>Doxygen tags should be proceeded by an &lsquo;<strong>@</strong>&rsquo;, not a &lsquo;<strong>&#92;</strong>&rsquo;, i.e. <strong>@brief</strong> is good, <strong>&#92;brief</strong> is bad.</p></li>
+
+<li><p>Use <strong>snake_case</strong> for variables, <strong>PascalCase</strong> for structs and <strong>NameSpaced_PascalCase</strong> for functions.</p></li>
+
+<li><p>Prefer <strong>calloc</strong> to <strong>malloc</strong>, unless the allocation is very large and it&rsquo;s being called in a performance critical area.</p></li>
+
+<li><p>Always initialize variables when declared to <strong>0</strong>, even if they&rsquo;re on the stack and the value will be overridden on the next line.</p></li>
+
+<li><p>Always prefer <strong>DescriptiveFunctionNames(&hellip;)</strong> to <strong>c_hakr_fnames(&hellip;)</strong>. But at the same time, don&rsquo;t be more descriptive than you have to. I like to ask myself &ldquo;would I know what this function does, and what its arguments are?&rdquo; when deciding this.</p></li>
+
+<li><p>Variable declarations, preprocessor directives, and any other blocks of similar statements should <strong>always be ordered from shortest to longest</strong>. If one statement depends on a previous statement that is longer, that statement should be broken out into its own logical block. This reduces visual noise and makes code easier to read.</p></li>
+
+<li><p>Never use <strong>/* block comments */</strong>. Instead, use:</p>
+
+<ul>
+<li><p>Double <strong>// Comments</strong> for comments within a function body. Note the space after the two double slashes. For short comments, full sentences are not required and only the first word should be capitalized. For multi-line comments, use full sentences with punctuation.</p></li>
+
+<li><p>Double <strong>// Comments</strong> guarded by lines of 79 &lsquo;<strong>&#92;</strong>&rsquo;s on both top and bottom for comments at global scope. An example of this is the first comment in the first rule below.</p></li>
+
+<li><p>Triple <strong>/// Comments</strong> guarded by lines of 79 &lsquo;<strong>&#92;</strong>&rsquo;s should be used instead for global scope comments if they&rsquo;re going to be generated into documentation.</p></li>
+
+<li><p>For complex functions that require detailed inline explanation, use the global style of comments, but with the guard line length reduced based on the current indentation. An example of what this would look like can be seen in several rules below.</p></li>
+</ul></li>
+</ul>
+
+<h3 id="indentation">Indentation</h3>
+
+<h4 id="use-4-spaces-not-tabs">Use 4 spaces, not tabs</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="lnt"> 1</span><span class="lnt"> 2</span><span class="lnt"> 3</span><span class="lnt"> 4</span><span class="lnt"> 5</span><span class="lnt"> 6</span><span class="lnt"> 7</span><span class="lnt"> 8</span><span class="lnt"> 9</span><span class="lnt">10</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1">// The Jpadkins C Style Guidelines
+</span><span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">puts</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;Hello World&#34;</span><span class="p">);</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>This is an old one, and solid arguments can be made for either side. I go with spaces. If you feel like sabotaging your productivity, search around for discussions on the topic.</p>
+
+<h4 id="max-79-character-line-length">Max 79 character line length</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="lnt">1</span><span class="lnt">2</span><span class="lnt">3</span><span class="lnt">4</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span><span class="o">-</span><span class="c1">// Max line length ////////////////////////////////////////////////////////////
+</span><span class="c1"></span><span class="o">+</span><span class="c1">// Maximum line length ////////////////////////////////////////////////////////
+</span><span class="c1"></span><span class="o">///////////////////////////////////////////////////////////////////////////////</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>Not only do shorter lines make code easier to read and control flow easier to follow, but keeping character count to, at most, 79, also allows <strong>git diff</strong> output to be viewed cleanly on a display with only 80 columns.</p>
+
+<p>And while the 80x24 minimum terminal size that everyone tries to support hasn&rsquo;t been an issue in quite some time AFAIK, I have noticed considerably reduced eye strain with shorter lines.</p>
+
+<h4 id="opening-braces-on-the-same-line-closing-braces-on-their-own-line">Opening braces on the same line, closing braces on their own line&hellip;</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="lnt"> 1</span><span class="lnt"> 2</span><span class="lnt"> 3</span><span class="lnt"> 4</span><span class="lnt"> 5</span><span class="lnt"> 6</span><span class="lnt"> 7</span><span class="lnt"> 8</span><span class="lnt"> 9</span><span class="lnt">10</span><span class="lnt">11</span><span class="lnt">12</span><span class="lnt">13</span><span class="lnt">14</span><span class="lnt">15</span><span class="lnt">16</span><span class="lnt">17</span><span class="lnt">18</span><span class="lnt">19</span><span class="lnt">20</span><span class="lnt">21</span><span class="lnt">22</span><span class="lnt">23</span><span class="lnt">24</span><span class="lnt">25</span><span class="lnt">26</span><span class="lnt">27</span><span class="lnt">28</span><span class="lnt">29</span><span class="lnt">30</span><span class="lnt">31</span><span class="lnt">32</span><span class="lnt">33</span><span class="lnt">34</span><span class="lnt">35</span><span class="lnt">36</span><span class="lnt">37</span><span class="lnt">38</span><span class="lnt">39</span><span class="lnt">40</span><span class="lnt">41</span><span class="lnt">42</span><span class="lnt">43</span><span class="lnt">44</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c">    <span class="c1">///////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">Foo</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">bar</span><span class="p">;</span>
+    <span class="p">};</span>
+
+    <span class="c1">///////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>    <span class="k">enum</span> <span class="n">Bar</span> <span class="p">{</span>
+        <span class="n">BAR_FOO</span><span class="p">,</span>
+        <span class="n">BAR_BAZ</span>
+    <span class="p">};</span>
+
+    <span class="c1">///////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>    <span class="k">union</span> <span class="n">FooBar</span> <span class="p">{</span>
+        <span class="k">struct</span> <span class="n">Foo</span> <span class="n">foo</span><span class="p">;</span>
+        <span class="k">enum</span> <span class="n">Bar</span> <span class="n">bar</span><span class="p">;</span>
+    <span class="p">};</span>
+
+    <span class="p">...</span>
+
+    <span class="c1">///////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">FooBar</span> <span class="n">foobars</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="p">{</span> <span class="p">.</span><span class="n">foo</span> <span class="o">=</span> <span class="p">{</span> <span class="p">.</span><span class="n">bar</span> <span class="o">=</span> <span class="mi">5</span> <span class="p">},</span> <span class="p">},</span>
+        <span class="p">{</span> <span class="p">.</span><span class="n">bar</span> <span class="o">=</span> <span class="n">BAR_FOO</span> <span class="p">}</span>
+    <span class="p">};</span>
+
+    <span class="c1">///////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">foo</span> <span class="o">&amp;&amp;</span> <span class="n">bar</span><span class="p">)</span> <span class="p">{</span>
+        <span class="p">...</span>
+    <span class="p">}</span>
+
+    <span class="c1">///////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>    <span class="k">while</span> <span class="p">(</span><span class="n">foobar</span><span class="p">)</span> <span class="p">{</span>
+        <span class="p">...</span>
+    <span class="p">}</span>
+
+    <span class="c1">///////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>    <span class="k">do</span> <span class="p">{</span>
+        <span class="p">...</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">baz</span><span class="p">);</span>
+
+    <span class="c1">///////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>    <span class="k">for</span> <span class="p">(;;)</span> <span class="p">{</span>
+        <span class="p">...</span>
+    <span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>The space saved by doing so is significant, and without much damage to readability.</p>
+
+<h4 id="except-when-it-comes-to-functions">&hellip;except when it comes to functions</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="lnt">1</span><span class="lnt">2</span><span class="lnt">3</span><span class="lnt">4</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="nf">DoSomething</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> 
+<span class="p">{</span>
+    <span class="n">puts</span><span class="p">(</span><span class="sa"></span><span class="s">&#34;always place the opening brace for functions on its own line&#34;</span><span class="p">);</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>The Kernel style guidelines point at K&amp;R to justify this inconsistency, as well as the fact that functions cannot be nested. Personally I think it produces clearer code, especially when the function&rsquo;s signature spans multiple lines.</p>
+
+<h4 id="always-use-braces-with-control-structures">Always use braces with control structures</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="lnt"> 1</span><span class="lnt"> 2</span><span class="lnt"> 3</span><span class="lnt"> 4</span><span class="lnt"> 5</span><span class="lnt"> 6</span><span class="lnt"> 7</span><span class="lnt"> 8</span><span class="lnt"> 9</span><span class="lnt">10</span><span class="lnt">11</span><span class="lnt">12</span><span class="lnt">13</span><span class="lnt">14</span><span class="lnt">15</span><span class="lnt">16</span><span class="lnt">17</span><span class="lnt">18</span><span class="lnt">19</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c">    <span class="c1">///////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>    <span class="c1">// Bad
+</span><span class="c1"></span>    <span class="c1">///////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">foo</span> <span class="o">&amp;&amp;</span> <span class="n">bar</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(;;)</span>
+        <span class="p">{</span>
+            <span class="p">...</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="c1">///////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>    <span class="c1">// Good
+</span><span class="c1"></span>    <span class="c1">///////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">foo</span> <span class="o">&amp;&amp;</span> <span class="n">bar</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(;;)</span> <span class="p">{</span>
+            <span class="p">...</span>
+        <span class="p">}</span>
+    <span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>Paired with the next rule, this allows for much more compact but just as readable code.</p>
+
+<h4 id="max-3-control-related-indentation-levels-of-the-same-type-2-of-different-types">Max 3 control-related indentation levels of the same type, 2 of different types</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="lnt"> 1</span><span class="lnt"> 2</span><span class="lnt"> 3</span><span class="lnt"> 4</span><span class="lnt"> 5</span><span class="lnt"> 6</span><span class="lnt"> 7</span><span class="lnt"> 8</span><span class="lnt"> 9</span><span class="lnt">10</span><span class="lnt">11</span><span class="lnt">12</span><span class="lnt">13</span><span class="lnt">14</span><span class="lnt">15</span><span class="lnt">16</span><span class="lnt">17</span><span class="lnt">18</span><span class="lnt">19</span><span class="lnt">20</span><span class="lnt">21</span><span class="lnt">22</span><span class="lnt">23</span><span class="lnt">24</span><span class="lnt">25</span><span class="lnt">26</span><span class="lnt">27</span><span class="lnt">28</span><span class="lnt">29</span><span class="lnt">30</span><span class="lnt">31</span><span class="lnt">32</span><span class="lnt">33</span><span class="lnt">34</span><span class="lnt">35</span><span class="lnt">36</span><span class="lnt">37</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c">    <span class="c1">///////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>    <span class="c1">// Bad
+</span><span class="c1"></span>    <span class="c1">///////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>    <span class="k">while</span> <span class="p">(</span><span class="n">foo</span> <span class="o">&amp;&amp;</span> <span class="n">bar</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">baz</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">baz</span><span class="o">-&gt;</span><span class="n">num</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">do</span> <span class="p">{</span>
+                    <span class="p">{</span>
+                        <span class="kt">int</span> <span class="n">tmp</span><span class="p">;</span>
+                        <span class="k">if</span> <span class="p">(...)</span> <span class="p">{</span>
+
+                        <span class="p">}</span>
+                    <span class="p">}</span>
+                <span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="nb">false</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="c1">///////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>    <span class="c1">// Good
+</span><span class="c1"></span>    <span class="c1">///////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>    <span class="k">while</span> <span class="p">(</span><span class="n">foo</span> <span class="o">&amp;&amp;</span> <span class="n">bar</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">baz</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">function_doing_lines_6_to_15</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="c1">///////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>    <span class="c1">// Also good
+</span><span class="c1"></span>    <span class="c1">///////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">x_max</span><span class="p">;</span> <span class="o">++</span><span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="n">y_max</span><span class="p">;</span> <span class="o">++</span><span class="n">y</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">z</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">z</span> <span class="o">&lt;</span> <span class="n">z_max</span><span class="p">;</span> <span class="o">++</span><span class="n">z</span><span class="p">)</span> <span class="p">{</span>
+                <span class="p">...</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>If you nest more than 3 control structures of the same type, or 2 of different types, it&rsquo;s time to move some of them into their own functions. Deeply nested control, even when you maintain short lines, quickly kills code readability.</p>
+
+<p>I choose the 3-related/2-different rule because sometimes nested control structures that are serving a closely related purpose (e.g. iterating over multidimensional data) maintain their readability.</p>
+
+<h4 id="both-switch-and-case-share-the-same-indentation">Both &lsquo;switch&rsquo; and &lsquo;case&rsquo; share the same indentation</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="lnt"> 1</span><span class="lnt"> 2</span><span class="lnt"> 3</span><span class="lnt"> 4</span><span class="lnt"> 5</span><span class="lnt"> 6</span><span class="lnt"> 7</span><span class="lnt"> 8</span><span class="lnt"> 9</span><span class="lnt">10</span><span class="lnt">11</span><span class="lnt">12</span><span class="lnt">13</span><span class="lnt">14</span><span class="lnt">15</span><span class="lnt">16</span><span class="lnt">17</span><span class="lnt">18</span><span class="lnt">19</span><span class="lnt">20</span><span class="lnt">21</span><span class="lnt">22</span><span class="lnt">23</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c">    <span class="c1">///////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>    <span class="c1">// Bad
+</span><span class="c1"></span>    <span class="c1">///////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>    <span class="k">switch</span> <span class="p">(</span><span class="n">foo</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">case</span> <span class="nl">BAR</span><span class="p">:</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">case</span> <span class="nl">BAZ</span><span class="p">:</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">default</span><span class="o">:</span>
+            <span class="k">break</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">///////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>    <span class="c1">// Good
+</span><span class="c1"></span>    <span class="c1">///////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>    <span class="k">switch</span> <span class="p">(</span><span class="n">foo</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">case</span> <span class="nl">BAR</span><span class="p">:</span>
+        <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="nl">BAZ</span><span class="p">:</span>
+        <span class="k">break</span><span class="p">;</span>
+    <span class="k">default</span><span class="o">:</span>
+        <span class="k">break</span><span class="p">;</span>
+    <span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>I think a lot of style guides agree on this one. Remember, <strong>indenting case is just wasted space</strong>.</p>
+
+<h4 id="indent-subsequent-lines-of-long-statements-that-are-not-in-control-structures-once">Indent subsequent lines of long statements that are not in control structures once</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="lnt"> 1</span><span class="lnt"> 2</span><span class="lnt"> 3</span><span class="lnt"> 4</span><span class="lnt"> 5</span><span class="lnt"> 6</span><span class="lnt"> 7</span><span class="lnt"> 8</span><span class="lnt"> 9</span><span class="lnt">10</span><span class="lnt">11</span><span class="lnt">12</span><span class="lnt">13</span><span class="lnt">14</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c">    <span class="c1">///////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>    <span class="c1">// Best you can do given the variable names
+</span><span class="c1"></span>    <span class="c1">///////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>    <span class="n">much_too_long_of_a_variable_name</span> <span class="o">=</span> <span class="n">another_much_too_long_variable_name</span>
+        <span class="o">*</span> <span class="n">a_third_much_too_long_variable_name</span>
+        <span class="o">*</span> <span class="n">a</span> <span class="n">forth_much_too_long_variable_name</span><span class="p">;</span>
+
+    <span class="c1">///////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>    <span class="c1">// Or, if even the first part of the statement was too long
+</span><span class="c1"></span>    <span class="c1">///////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>    <span class="n">much_too_long_of_a_variable_name</span>
+        <span class="o">=</span> <span class="n">another_much_much_much_too_long_variable_name</span>
+        <span class="o">*</span> <span class="n">a_third_much_too_long_variable_name</span>
+        <span class="o">*</span> <span class="n">a</span> <span class="n">forth_much_too_long_variable_name</span><span class="p">;</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>Unavoidably long statements should be broken into multiple lines with the operator starting on the new line. Note that you should avoid writing long variable names in general. My rule of thumb is no more than two &lsquo;_&rsquo;s, but sometimes there is no other option.</p>
+
+<h4 id="indent-subsequent-lines-of-long-statements-within-control-structures-twice">Indent subsequent lines of long statements within control structures twice</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="lnt"> 1</span><span class="lnt"> 2</span><span class="lnt"> 3</span><span class="lnt"> 4</span><span class="lnt"> 5</span><span class="lnt"> 6</span><span class="lnt"> 7</span><span class="lnt"> 8</span><span class="lnt"> 9</span><span class="lnt">10</span><span class="lnt">11</span><span class="lnt">12</span><span class="lnt">13</span><span class="lnt">14</span><span class="lnt">15</span><span class="lnt">16</span><span class="lnt">17</span><span class="lnt">18</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c">    <span class="c1">///////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>    <span class="c1">// Best you can do given the variable names
+</span><span class="c1"></span>    <span class="c1">///////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">much_too_long_of_a_variable_name</span>
+            <span class="o">=</span> <span class="n">get_much_too_long_of_a_variable_name</span><span class="p">))</span> <span class="p">{</span>
+        <span class="p">...</span>
+    <span class="p">}</span>
+
+    <span class="c1">///////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>    <span class="c1">// Or, given a very long conditional
+</span><span class="c1"></span>    <span class="c1">///////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>    <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">CheckSomething</span><span class="p">()</span> <span class="o">||</span> <span class="n">CheckAnotherThing</span><span class="p">())</span>
+            <span class="o">||</span> <span class="o">!</span><span class="p">(</span><span class="n">CheckAThirdThing</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="n">foo</span><span class="p">)</span>
+            <span class="o">||</span> <span class="p">(</span><span class="n">CheckSomethingAgain</span><span class="p">()</span>
+                <span class="o">||</span> <span class="n">CheckSomethingWithMuchTooLongOfAName</span><span class="p">())</span>
+            <span class="o">&amp;&amp;</span> <span class="n">bar</span><span class="p">)</span> <span class="p">{</span>
+        <span class="p">...</span>
+    <span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>Indenting control structures (if, do, while, for) twice makes the contained code much more readable. Line breaks should be inserted before conditionals that would go past the maximum line length, so that optimally each conditional is on its own line. Note that if a condition requires its own line break (as on line 14), it is indented further only once.</p>
+
+<h2 id="naming">Naming</h2>
+
+<h3 id="variables-use-snake-case">Variables use snake case</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="lnt">1</span><span class="lnt">2</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c">    <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+    <span class="kt">float</span> <span class="n">y_coord</span> <span class="o">=</span> <span class="mf">5.0f</span><span class="p">;</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>This makes it easy to spot variable names when they&rsquo;re mixed in with functions, etc.</p>
+
+<h4 id="structs-enums-and-unions-use-pascalcase-with-an-optional-namespace-prefix">Structs, Enums, and Unions use PascalCase (with an optional namespace prefix)</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="lnt"> 1</span><span class="lnt"> 2</span><span class="lnt"> 3</span><span class="lnt"> 4</span><span class="lnt"> 5</span><span class="lnt"> 6</span><span class="lnt"> 7</span><span class="lnt"> 8</span><span class="lnt"> 9</span><span class="lnt">10</span><span class="lnt">11</span><span class="lnt">12</span><span class="lnt">13</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c">    <span class="c1">///////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>    <span class="c1">// Given no namespace
+</span><span class="c1"></span>    <span class="c1">///////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">FooBar</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">baz</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">///////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>    <span class="c1">// Example with namespace - the project could be called &#34;My Project&#34;
+</span><span class="c1"></span>    <span class="c1">///////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>    <span class="k">struct</span> <span class="n">mpFooBar</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">baz</span><span class="p">;</span>
+    <span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>Try to keep the namespace characters to a maximum of 3.</p>
+
+<h4 id="functions-use-pascalcase-or-structurename-pascalcase">Functions use PascalCase, or StructureName_PascalCase</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="lnt">1</span><span class="lnt">2</span><span class="lnt">3</span><span class="lnt">4</span><span class="lnt">5</span><span class="lnt">6</span><span class="lnt">7</span><span class="lnt">8</span><span class="lnt">9</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c">    <span class="c1">///////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>    <span class="c1">// Example of a generic function
+</span><span class="c1"></span>    <span class="c1">///////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>    <span class="kt">void</span> <span class="nf">PrintHello</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
+
+    <span class="c1">///////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>    <span class="c1">// Example of a function operating on a struct FooBar
+</span><span class="c1"></span>    <span class="c1">///////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>    <span class="kt">void</span> <span class="nf">mpFooBar_PrintBaz</span><span class="p">(</span><span class="k">struct</span> <span class="n">FooBar</span> <span class="o">*</span><span class="n">this</span><span class="p">);</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>There&rsquo;s a few conventions I follow when it comes to function signatures which I believe helps the code to describe its intent to readers. Besides using <strong>StructureName_FunctionName</strong> for functions operating on a custom data type, I like to always have the first parameter be its pointer, and have that parameter be named <strong>this</strong>.</p>
+
+<h4 id="all-parameters-of-long-function-signatures-get-their-own-line-indented-twice">All parameters of long function signatures get their own line, indented twice</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="lnt">1</span><span class="lnt">2</span><span class="lnt">3</span><span class="lnt">4</span><span class="lnt">5</span><span class="lnt">6</span><span class="lnt">7</span><span class="lnt">8</span><span class="lnt">9</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="kt">void</span> <span class="nf">mpFooBar_DoSomethingWithManyArgs</span><span class="p">(</span>
+        <span class="k">struct</span> <span class="n">FooBar</span> <span class="o">*</span><span class="n">this</span><span class="p">,</span>
+        <span class="kt">int</span> <span class="n">arg1</span><span class="p">,</span>
+        <span class="kt">float</span> <span class="n">arg2</span><span class="p">,</span>
+        <span class="kt">bool</span> <span class="n">arg3</span><span class="p">,</span>
+        <span class="kt">double</span> <span class="n">arg4</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="p">...</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>Note that the closing &lsquo;)&rsquo; of the function signature is at the end of the same line as the last parameter.</p>
+
+<h3 id="layout">Layout</h3>
+
+<h4 id="header-file-layout">Header file layout</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="lnt"> 1</span><span class="lnt"> 2</span><span class="lnt"> 3</span><span class="lnt"> 4</span><span class="lnt"> 5</span><span class="lnt"> 6</span><span class="lnt"> 7</span><span class="lnt"> 8</span><span class="lnt"> 9</span><span class="lnt">10</span><span class="lnt">11</span><span class="lnt">12</span><span class="lnt">13</span><span class="lnt">14</span><span class="lnt">15</span><span class="lnt">16</span><span class="lnt">17</span><span class="lnt">18</span><span class="lnt">19</span><span class="lnt">20</span><span class="lnt">21</span><span class="lnt">22</span><span class="lnt">23</span><span class="lnt">24</span><span class="lnt">25</span><span class="lnt">26</span><span class="lnt">27</span><span class="lnt">28</span><span class="lnt">29</span><span class="lnt">30</span><span class="lnt">31</span><span class="lnt">32</span><span class="lnt">33</span><span class="lnt">34</span><span class="lnt">35</span><span class="lnt">36</span><span class="lnt">37</span><span class="lnt">38</span><span class="lnt">39</span><span class="lnt">40</span><span class="lnt">41</span><span class="lnt">42</span><span class="lnt">43</span><span class="lnt">44</span><span class="lnt">45</span><span class="lnt">46</span><span class="lnt">47</span><span class="lnt">48</span><span class="lnt">49</span><span class="lnt">50</span><span class="lnt">51</span><span class="lnt">52</span><span class="lnt">53</span><span class="lnt">54</span><span class="lnt">55</span><span class="lnt">56</span><span class="lnt">57</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c">    
+<span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1">/// @file	foobar.h
+</span><span class="c1">/// @author	Jacob Adkins (jpadkins)
+</span><span class="c1">/// @brief	Description of the Foobar struct.
+</span><span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span><span class="cp">#ifndef PROJECT_NAME__FOOBAR_H
+</span><span class="cp">#define PROJECT_NAME__FOOBAR_H
+</span><span class="cp"></span>
+<span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1">// Includes
+</span><span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span><span class="cp">#include</span> <span class="cpf">&#34;bar.h&#34;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1">// Types
+</span><span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>
+<span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1">/// @brief Description of the Foobar struct
+</span><span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span><span class="k">typedef</span> <span class="k">struct</span> <span class="n">_Foobar</span> <span class="n">Foobar</span><span class="p">;</span>
+
+<span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1">// Functions
+</span><span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>
+<span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1">/// @brief Create a new Foobar
+</span><span class="c1">///
+</span><span class="c1">/// @return pointer to a new Foobar
+</span><span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span><span class="n">Foobar</span> <span class="o">*</span><span class="nf">Foobar_Create</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
+
+<span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1">/// @brief Free the memory allocated for a Foobar
+</span><span class="c1">///
+</span><span class="c1">/// @param this The Foobar
+</span><span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span><span class="kt">void</span> <span class="nf">Foobar_Destroy</span><span class="p">(</span><span class="n">Foobar</span> <span class="o">*</span><span class="n">this</span><span class="p">);</span>
+
+<span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1">/// @brief Do something with a Foobar
+</span><span class="c1">///
+</span><span class="c1">/// A more detailed description of the function.
+</span><span class="c1">///
+</span><span class="c1">/// @param this The Foobar
+</span><span class="c1">/// @param foo  Value of ...
+</span><span class="c1">/// @param bar  Determines ...
+</span><span class="c1">///
+</span><span class="c1">/// @return True if ... , otherwise false
+</span><span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span><span class="kt">bool</span> <span class="nf">Foobar_DoSomething</span><span class="p">(</span><span class="n">Foobar</span> <span class="o">*</span><span class="n">this</span><span class="p">,</span> <span class="kt">int</span> <span class="n">foo</span><span class="p">,</span> <span class="n">Bar</span> <span class="o">*</span><span class="n">bar</span><span class="p">);</span>
+
+<span class="c1">// PROJECT_NAME__FOOBAR_H
+</span><span class="c1"></span><span class="cp">#endif
+</span><span class="cp"></span>    </code></pre></td></tr></table>
+</div>
+</div>
+<p>This is an exmaple of how a header file might be organized for an API focusing on a struct named <strong>Foobar</strong>. Some things to note:</p>
+
+<ul>
+<li><p>I try to follow this exact pattern with every header file.</p></li>
+
+<li><p>The blank line before the first block of comments at the top of the file is intentional.</p></li>
+
+<li><p>Global-scoped guarded comments defining a section use only two &lsquo;<strong>&#92;</strong>&rsquo;s because no documentation is generated from them.</p></li>
+
+<li><p>For Doxygen tags, always use 1 space between the start of the tag and the opening &lsquo;<strong>&#92;</strong>&rsquo;s, and then another single space between the end of the tag and the start of the value. When it comes to subsequent values, such as descriptions of a <strong>@param</strong> tag, always indent-align.</p></li>
+</ul>
+
+<h4 id="source-file-layout">Source file layout</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="lnt"> 1</span><span class="lnt"> 2</span><span class="lnt"> 3</span><span class="lnt"> 4</span><span class="lnt"> 5</span><span class="lnt"> 6</span><span class="lnt"> 7</span><span class="lnt"> 8</span><span class="lnt"> 9</span><span class="lnt">10</span><span class="lnt">11</span><span class="lnt">12</span><span class="lnt">13</span><span class="lnt">14</span><span class="lnt">15</span><span class="lnt">16</span><span class="lnt">17</span><span class="lnt">18</span><span class="lnt">19</span><span class="lnt">20</span><span class="lnt">21</span><span class="lnt">22</span><span class="lnt">23</span><span class="lnt">24</span><span class="lnt">25</span><span class="lnt">26</span><span class="lnt">27</span><span class="lnt">28</span><span class="lnt">29</span><span class="lnt">30</span><span class="lnt">31</span><span class="lnt">32</span><span class="lnt">33</span><span class="lnt">34</span><span class="lnt">35</span><span class="lnt">36</span><span class="lnt">37</span><span class="lnt">38</span><span class="lnt">39</span><span class="lnt">40</span><span class="lnt">41</span><span class="lnt">42</span><span class="lnt">43</span><span class="lnt">44</span><span class="lnt">45</span><span class="lnt">46</span><span class="lnt">47</span><span class="lnt">48</span><span class="lnt">49</span><span class="lnt">50</span><span class="lnt">51</span><span class="lnt">52</span><span class="lnt">53</span><span class="lnt">54</span><span class="lnt">55</span><span class="lnt">56</span><span class="lnt">57</span><span class="lnt">58</span><span class="lnt">59</span><span class="lnt">60</span><span class="lnt">61</span><span class="lnt">62</span><span class="lnt">63</span><span class="lnt">64</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c">    
+<span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1">/// @file	foobar.c
+</span><span class="c1">/// @author	Jacob Adkins (jpadkins)
+</span><span class="c1">/// @brief	Description of the Foobar struct.
+</span><span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span><span class="cp">#include</span> <span class="cpf">&#34;foobar.h&#34;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1">// Includes
+</span><span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+</span><span class="cp"></span>
+<span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1">// Constants
+</span><span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span><span class="cp">#define FOOBAR_CONSTANT 42
+</span><span class="cp"></span>
+<span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1">// Types
+</span><span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span><span class="k">struct</span> <span class="n">_Foobar</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">foo</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">bar</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1">// Private functions
+</span><span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>
+<span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1">/// @brief Does ...
+</span><span class="c1">///
+</span><span class="c1">/// @param this The Foobar
+</span><span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span><span class="k">static</span> <span class="kt">void</span> <span class="n">Foobar_DoSomethingHelper</span><span class="p">(</span><span class="n">Foobar</span> <span class="o">*</span><span class="n">this</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="p">...</span>
+<span class="p">}</span>
+
+<span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1">// Public functions
+</span><span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span>
+<span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span><span class="n">Foobar</span> <span class="o">*</span><span class="n">Foobar_Create</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="p">...</span>
+<span class="p">}</span>
+
+<span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span><span class="kt">void</span> <span class="n">Foobar_Destroy</span><span class="p">(</span><span class="n">Foobar</span> <span class="o">*</span><span class="n">this</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="p">...</span>
+<span class="p">}</span>
+
+<span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span><span class="kt">bool</span> <span class="n">Foobar_DoSomething</span><span class="p">(</span><span class="n">Foobar</span> <span class="o">*</span><span class="n">this</span><span class="p">,</span> <span class="kt">int</span> <span class="n">foo</span><span class="p">,</span> <span class="n">Bar</span> <span class="o">*</span><span class="n">bar</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">Foobar_DoSomethingHelper</span><span class="p">(</span><span class="n">this</span><span class="p">);</span>
+    <span class="p">...</span>
+<span class="p">}</span>
+    </code></pre></td></tr></table>
+</div>
+</div>
+<p>This is an exmaple of how a source file might be organized for an API focusing on a struct named <strong>Foobar</strong>. Some things to note:</p>
+
+<ul>
+<li><p>I try to follow this exact pattern with every source file.</p></li>
+
+<li><p>The blank line before the first block of comments at the top of the file is intentional.</p></li>
+
+<li><p>I like to hide as much of the implementation of an API as I can in the static functions that are private to the translation unit.</p></li>
+</ul>
+
+<h3 id="function-definition-layout">function definition layout</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="lnt"> 1</span><span class="lnt"> 2</span><span class="lnt"> 3</span><span class="lnt"> 4</span><span class="lnt"> 5</span><span class="lnt"> 6</span><span class="lnt"> 7</span><span class="lnt"> 8</span><span class="lnt"> 9</span><span class="lnt">10</span><span class="lnt">11</span><span class="lnt">12</span><span class="lnt">13</span><span class="lnt">14</span><span class="lnt">15</span><span class="lnt">16</span><span class="lnt">17</span><span class="lnt">18</span><span class="lnt">19</span><span class="lnt">20</span><span class="lnt">21</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="n">Foobar</span> <span class="o">*</span><span class="nf">Foobar_Create</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// Sanity checks
+</span><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">SomeOtherApi_GetValue</span><span class="p">())</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">// Variable declarations and initializations
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="n">foo</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">bar</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">Foobar</span> <span class="o">*</span><span class="n">this</span> <span class="o">=</span> <span class="nb">NULL</span><span class="o">:</span>
+
+    <span class="c1">// Processing
+</span><span class="c1"></span>    <span class="n">foo</span> <span class="o">=</span> <span class="p">...</span>
+    <span class="n">bar</span> <span class="o">=</span> <span class="p">...</span>
+    <span class="n">this</span><span class="o">-&gt;</span><span class="n">foo</span> <span class="o">=</span> <span class="n">foo</span><span class="p">;</span>
+    <span class="n">this</span><span class="o">-&gt;</span><span class="n">bar</span> <span class="o">=</span> <span class="n">bar</span><span class="p">;</span>
+
+    <span class="c1">// Return
+</span><span class="c1"></span>    <span class="k">return</span> <span class="n">this</span><span class="p">;</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+<p>The contents of functions all follow this structure:</p>
+
+<ul>
+<li>Sanity checks</li>
+<li>Variable declarations and initializations</li>
+<li>Processing</li>
+<li>Return</li>
+</ul>
+
+<p>I used to try to avoid compound literals whenever possible due to inconsistencies in the MSVC implementation, but I believe that most of the C99 spec is now supported (minus variable-length stack-allocated arrays) so I&rsquo;m currently reviewing my stance.</p>
+
+<h2 id="closing">Closing</h2>
+
+<p>This is very much a living document and I&rsquo;ll be editing/updating its contents as I move forward with my pet projects that are in c. As I stated in the intro, don&rsquo;t be a stanger and let me know of any thoughts/criticism/suggestions.</p>
+
+<p>Thanks,</p>
+
+<p>jpadkins</p>
+
+</main>
+
+            <footer>
+                <hr/>
+                &copy; Jacob P Adkins 2018 | <a href="https://github.com/jpadkins">Github</a>
+            </footer>
+            
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-113920057-1', 'auto');
+ga('send', 'pageview');
+</script>
+
+        </div>
+    </body>
+</html>
+

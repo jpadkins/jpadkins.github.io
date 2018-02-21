@@ -49,19 +49,23 @@
 <h3 id="general-dos-and-don-ts">General Dos and Don&rsquo;ts</h3>
 
 <ul>
-<li><p>Never used <strong>unsigned</strong> when you can use an <strong>int</strong>.</p></li>
+<li><p>Multiple variables can be declared on the same line <strong>except</strong> in structs.</p></li>
 
-<li><p>Doxygen tags should be proceeded by an &lsquo;<strong>@</strong>&rsquo;, not a &lsquo;<strong>&#92;</strong>&rsquo;, i.e. <strong>@brief</strong> is good, <strong>&#92;brief</strong> is bad.</p></li>
+<li><p>Doxygen tags should be proceded by an &lsquo;<strong>@</strong>&rsquo;, not a &lsquo;<strong>&#92;</strong>&rsquo;, i.e. <strong>@brief</strong> is good, <strong>&#92;brief</strong> is bad.</p></li>
+
+<li><p>Avoid compound literals whenever possible due to inconsistencies in the MSVC implementation.</p></li>
 
 <li><p>Use <strong>snake_case</strong> for variables, <strong>PascalCase</strong> for structs and <strong>NameSpaced_PascalCase</strong> for functions.</p></li>
 
 <li><p>Prefer <strong>calloc</strong> to <strong>malloc</strong>, unless the allocation is very large and it&rsquo;s being called in a performance critical area.</p></li>
 
-<li><p>Always initialize variables when declared to <strong>0</strong>, even if they&rsquo;re on the stack and the value will be overridden on the next line.</p></li>
+<li><p>Try not to initialize variables when declared to 0/NULL/etc&hellip; if those values are not directly used later on. This prevents useful compiler diagnostics regarding undefined behavior from being suppressed.</p></li>
 
 <li><p>Always prefer <strong>DescriptiveFunctionNames(&hellip;)</strong> to <strong>c_hakr_fnames(&hellip;)</strong>. But at the same time, don&rsquo;t be more descriptive than you have to. I like to ask myself &ldquo;would I know what this function does, and what its arguments are?&rdquo; when deciding this.</p></li>
 
 <li><p>Variable declarations, preprocessor directives, and any other blocks of similar statements should <strong>always be ordered from shortest to longest</strong>. If one statement depends on a previous statement that is longer, that statement should be broken out into its own logical block. This reduces visual noise and makes code easier to read.</p></li>
+
+<li><p>Never used <strong>unsigned</strong> when you can use an <strong>int</strong>. The reasoning behind this is that type-promotion in complex statements involving signed and unsigned values can be confusing, compiler-specific, or even lead to undefined behavior. <strong>long long signed int</strong> is large enough for most use cases, and signed ints are more versatile in generaal than their unsigned counterparts. Note that there are times that unsigned values should be preferred, such as storing very large values, interfacing with certain library APIs, or working with bitmasks.</p></li>
 
 <li><p>Never use <strong>/* block comments */</strong>. Instead, use:</p>
 
@@ -412,7 +416,7 @@
 <h4 id="header-file-layout">Header file layout</h4>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="lnt"> 1</span><span class="lnt"> 2</span><span class="lnt"> 3</span><span class="lnt"> 4</span><span class="lnt"> 5</span><span class="lnt"> 6</span><span class="lnt"> 7</span><span class="lnt"> 8</span><span class="lnt"> 9</span><span class="lnt">10</span><span class="lnt">11</span><span class="lnt">12</span><span class="lnt">13</span><span class="lnt">14</span><span class="lnt">15</span><span class="lnt">16</span><span class="lnt">17</span><span class="lnt">18</span><span class="lnt">19</span><span class="lnt">20</span><span class="lnt">21</span><span class="lnt">22</span><span class="lnt">23</span><span class="lnt">24</span><span class="lnt">25</span><span class="lnt">26</span><span class="lnt">27</span><span class="lnt">28</span><span class="lnt">29</span><span class="lnt">30</span><span class="lnt">31</span><span class="lnt">32</span><span class="lnt">33</span><span class="lnt">34</span><span class="lnt">35</span><span class="lnt">36</span><span class="lnt">37</span><span class="lnt">38</span><span class="lnt">39</span><span class="lnt">40</span><span class="lnt">41</span><span class="lnt">42</span><span class="lnt">43</span><span class="lnt">44</span><span class="lnt">45</span><span class="lnt">46</span><span class="lnt">47</span><span class="lnt">48</span><span class="lnt">49</span><span class="lnt">50</span><span class="lnt">51</span><span class="lnt">52</span><span class="lnt">53</span><span class="lnt">54</span><span class="lnt">55</span><span class="lnt">56</span><span class="lnt">57</span></code></pre></td>
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="lnt"> 1</span><span class="lnt"> 2</span><span class="lnt"> 3</span><span class="lnt"> 4</span><span class="lnt"> 5</span><span class="lnt"> 6</span><span class="lnt"> 7</span><span class="lnt"> 8</span><span class="lnt"> 9</span><span class="lnt">10</span><span class="lnt">11</span><span class="lnt">12</span><span class="lnt">13</span><span class="lnt">14</span><span class="lnt">15</span><span class="lnt">16</span><span class="lnt">17</span><span class="lnt">18</span><span class="lnt">19</span><span class="lnt">20</span><span class="lnt">21</span><span class="lnt">22</span><span class="lnt">23</span><span class="lnt">24</span><span class="lnt">25</span><span class="lnt">26</span><span class="lnt">27</span><span class="lnt">28</span><span class="lnt">29</span><span class="lnt">30</span><span class="lnt">31</span><span class="lnt">32</span><span class="lnt">33</span><span class="lnt">34</span><span class="lnt">35</span><span class="lnt">36</span><span class="lnt">37</span><span class="lnt">38</span><span class="lnt">39</span><span class="lnt">40</span><span class="lnt">41</span><span class="lnt">42</span><span class="lnt">43</span><span class="lnt">44</span><span class="lnt">45</span><span class="lnt">46</span><span class="lnt">47</span><span class="lnt">48</span><span class="lnt">49</span><span class="lnt">50</span><span class="lnt">51</span><span class="lnt">52</span><span class="lnt">53</span><span class="lnt">54</span><span class="lnt">55</span><span class="lnt">56</span><span class="lnt">57</span><span class="lnt">58</span><span class="lnt">59</span><span class="lnt">60</span><span class="lnt">61</span><span class="lnt">62</span><span class="lnt">63</span><span class="lnt">64</span><span class="lnt">65</span><span class="lnt">66</span><span class="lnt">67</span><span class="lnt">68</span><span class="lnt">69</span><span class="lnt">70</span><span class="lnt">71</span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-c" data-lang="c">    
 <span class="c1">///////////////////////////////////////////////////////////////////////////////
@@ -442,6 +446,20 @@
 </span><span class="c1">///////////////////////////////////////////////////////////////////////////////
 </span><span class="c1"></span>
 <span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1">/// @brief Initialize the Foobar subsystem
+</span><span class="c1">///
+</span><span class="c1">/// This should be called before any other Foobar_* functions.
+</span><span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span><span class="kt">void</span> <span class="nf">Foobar_Init</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
+
+<span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1">/// @brief Clean up the Foobar subsystem
+</span><span class="c1">///
+</span><span class="c1">/// This should be called after all other Foobar_* functions.
+</span><span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span><span class="kt">void</span> <span class="nf">Foobar_Quit</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
+
+<span class="c1">///////////////////////////////////////////////////////////////////////////////
 </span><span class="c1">/// @brief Create a new Foobar
 </span><span class="c1">///
 </span><span class="c1">/// @return pointer to a new Foobar
@@ -458,7 +476,7 @@
 <span class="c1">///////////////////////////////////////////////////////////////////////////////
 </span><span class="c1">/// @brief Do something with a Foobar
 </span><span class="c1">///
-</span><span class="c1">/// A more detailed description of the function.
+</span><span class="c1">/// This is a more detailed description of the function using full sentences.
 </span><span class="c1">///
 </span><span class="c1">/// @param this The Foobar
 </span><span class="c1">/// @param foo  Value of ...
@@ -488,7 +506,7 @@
 <h4 id="source-file-layout">Source file layout</h4>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="lnt"> 1</span><span class="lnt"> 2</span><span class="lnt"> 3</span><span class="lnt"> 4</span><span class="lnt"> 5</span><span class="lnt"> 6</span><span class="lnt"> 7</span><span class="lnt"> 8</span><span class="lnt"> 9</span><span class="lnt">10</span><span class="lnt">11</span><span class="lnt">12</span><span class="lnt">13</span><span class="lnt">14</span><span class="lnt">15</span><span class="lnt">16</span><span class="lnt">17</span><span class="lnt">18</span><span class="lnt">19</span><span class="lnt">20</span><span class="lnt">21</span><span class="lnt">22</span><span class="lnt">23</span><span class="lnt">24</span><span class="lnt">25</span><span class="lnt">26</span><span class="lnt">27</span><span class="lnt">28</span><span class="lnt">29</span><span class="lnt">30</span><span class="lnt">31</span><span class="lnt">32</span><span class="lnt">33</span><span class="lnt">34</span><span class="lnt">35</span><span class="lnt">36</span><span class="lnt">37</span><span class="lnt">38</span><span class="lnt">39</span><span class="lnt">40</span><span class="lnt">41</span><span class="lnt">42</span><span class="lnt">43</span><span class="lnt">44</span><span class="lnt">45</span><span class="lnt">46</span><span class="lnt">47</span><span class="lnt">48</span><span class="lnt">49</span><span class="lnt">50</span><span class="lnt">51</span><span class="lnt">52</span><span class="lnt">53</span><span class="lnt">54</span><span class="lnt">55</span><span class="lnt">56</span><span class="lnt">57</span><span class="lnt">58</span><span class="lnt">59</span><span class="lnt">60</span><span class="lnt">61</span><span class="lnt">62</span><span class="lnt">63</span><span class="lnt">64</span></code></pre></td>
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="lnt"> 1</span><span class="lnt"> 2</span><span class="lnt"> 3</span><span class="lnt"> 4</span><span class="lnt"> 5</span><span class="lnt"> 6</span><span class="lnt"> 7</span><span class="lnt"> 8</span><span class="lnt"> 9</span><span class="lnt">10</span><span class="lnt">11</span><span class="lnt">12</span><span class="lnt">13</span><span class="lnt">14</span><span class="lnt">15</span><span class="lnt">16</span><span class="lnt">17</span><span class="lnt">18</span><span class="lnt">19</span><span class="lnt">20</span><span class="lnt">21</span><span class="lnt">22</span><span class="lnt">23</span><span class="lnt">24</span><span class="lnt">25</span><span class="lnt">26</span><span class="lnt">27</span><span class="lnt">28</span><span class="lnt">29</span><span class="lnt">30</span><span class="lnt">31</span><span class="lnt">32</span><span class="lnt">33</span><span class="lnt">34</span><span class="lnt">35</span><span class="lnt">36</span><span class="lnt">37</span><span class="lnt">38</span><span class="lnt">39</span><span class="lnt">40</span><span class="lnt">41</span><span class="lnt">42</span><span class="lnt">43</span><span class="lnt">44</span><span class="lnt">45</span><span class="lnt">46</span><span class="lnt">47</span><span class="lnt">48</span><span class="lnt">49</span><span class="lnt">50</span><span class="lnt">51</span><span class="lnt">52</span><span class="lnt">53</span><span class="lnt">54</span><span class="lnt">55</span><span class="lnt">56</span><span class="lnt">57</span><span class="lnt">58</span><span class="lnt">59</span><span class="lnt">60</span><span class="lnt">61</span><span class="lnt">62</span><span class="lnt">63</span><span class="lnt">64</span><span class="lnt">65</span><span class="lnt">66</span><span class="lnt">67</span><span class="lnt">68</span><span class="lnt">69</span><span class="lnt">70</span><span class="lnt">71</span><span class="lnt">72</span><span class="lnt">73</span><span class="lnt">74</span><span class="lnt">75</span><span class="lnt">76</span><span class="lnt">77</span><span class="lnt">78</span><span class="lnt">79</span><span class="lnt">80</span><span class="lnt">81</span><span class="lnt">82</span><span class="lnt">83</span><span class="lnt">84</span><span class="lnt">85</span><span class="lnt">86</span><span class="lnt">87</span><span class="lnt">88</span><span class="lnt">89</span><span class="lnt">90</span><span class="lnt">91</span><span class="lnt">92</span><span class="lnt">93</span><span class="lnt">94</span><span class="lnt">95</span><span class="lnt">96</span><span class="lnt">97</span><span class="lnt">98</span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-c" data-lang="c">    
 <span class="c1">///////////////////////////////////////////////////////////////////////////////
@@ -518,6 +536,17 @@
 <span class="p">}</span>
 
 <span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1">// Static variables
+</span><span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span><span class="k">static</span> <span class="k">struct</span> <span class="n">FoobarGlobal</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">baz</span><span class="p">;</span>
+    <span class="n">Foobar</span> <span class="o">*</span><span class="n">default_foobar</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">global</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">.</span><span class="n">default_foobar</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">,</span>
+    <span class="p">.</span><span class="n">baz</span> <span class="o">=</span> <span class="p">...</span>
+<span class="p">};</span>
+
+<span class="c1">///////////////////////////////////////////////////////////////////////////////
 </span><span class="c1">// Private functions
 </span><span class="c1">///////////////////////////////////////////////////////////////////////////////
 </span><span class="c1"></span>
@@ -526,7 +555,7 @@
 </span><span class="c1">///
 </span><span class="c1">/// @param this The Foobar
 </span><span class="c1">///////////////////////////////////////////////////////////////////////////////
-</span><span class="c1"></span><span class="k">static</span> <span class="kt">void</span> <span class="n">Foobar_DoSomethingHelper</span><span class="p">(</span><span class="n">Foobar</span> <span class="o">*</span><span class="n">this</span><span class="p">)</span>
+</span><span class="c1"></span><span class="k">static</span> <span class="kt">void</span> <span class="nf">Foobar_DoSomethingHelper</span><span class="p">(</span><span class="n">Foobar</span> <span class="o">*</span><span class="n">this</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="p">...</span>
 <span class="p">}</span>
@@ -536,19 +565,42 @@
 </span><span class="c1">///////////////////////////////////////////////////////////////////////////////
 </span><span class="c1"></span>
 <span class="c1">///////////////////////////////////////////////////////////////////////////////
-</span><span class="c1"></span><span class="n">Foobar</span> <span class="o">*</span><span class="n">Foobar_Create</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+</span><span class="c1"></span><span class="kt">void</span> <span class="nf">Foobar_Init</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
 <span class="p">{</span>
-    <span class="p">...</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">global</span><span class="p">.</span><span class="n">default_foobar</span> <span class="o">=</span> <span class="p">...))</span> <span class="p">{</span>
+        <span class="p">...</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 
 <span class="c1">///////////////////////////////////////////////////////////////////////////////
-</span><span class="c1"></span><span class="kt">void</span> <span class="n">Foobar_Destroy</span><span class="p">(</span><span class="n">Foobar</span> <span class="o">*</span><span class="n">this</span><span class="p">)</span>
+</span><span class="c1"></span><span class="kt">void</span> <span class="nf">Foobar_Quit</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
 <span class="p">{</span>
-    <span class="p">...</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">global</span><span class="p">.</span><span class="n">default_foobar</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">free</span><span class="p">(</span><span class="n">global</span><span class="p">.</span><span class="n">default_foobar</span><span class="p">);</span>
+        <span class="p">...</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 
 <span class="c1">///////////////////////////////////////////////////////////////////////////////
-</span><span class="c1"></span><span class="kt">bool</span> <span class="n">Foobar_DoSomething</span><span class="p">(</span><span class="n">Foobar</span> <span class="o">*</span><span class="n">this</span><span class="p">,</span> <span class="kt">int</span> <span class="n">foo</span><span class="p">,</span> <span class="n">Bar</span> <span class="o">*</span><span class="n">bar</span><span class="p">)</span>
+</span><span class="c1"></span><span class="n">Foobar</span> <span class="o">*</span><span class="nf">Foobar_Create</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">Foobar</span> <span class="o">*</span><span class="n">this</span><span class="p">;</span>
+
+    <span class="p">...</span>
+
+    <span class="k">return</span> <span class="n">this</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span><span class="kt">void</span> <span class="nf">Foobar_Destroy</span><span class="p">(</span><span class="n">Foobar</span> <span class="o">*</span><span class="n">this</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">this</span><span class="p">)</span> <span class="p">{</span>
+        <span class="p">...</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">///////////////////////////////////////////////////////////////////////////////
+</span><span class="c1"></span><span class="kt">bool</span> <span class="nf">Foobar_DoSomething</span><span class="p">(</span><span class="n">Foobar</span> <span class="o">*</span><span class="n">this</span><span class="p">,</span> <span class="kt">int</span> <span class="n">foo</span><span class="p">,</span> <span class="n">Bar</span> <span class="o">*</span><span class="n">bar</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="n">Foobar_DoSomethingHelper</span><span class="p">(</span><span class="n">this</span><span class="p">);</span>
     <span class="p">...</span>
@@ -564,12 +616,14 @@
 <li><p>The blank line before the first block of comments at the top of the file is intentional.</p></li>
 
 <li><p>I like to hide as much of the implementation of an API as I can in the static functions that are private to the translation unit.</p></li>
+
+<li><p>I encapsulate global static variables in a struct named <strong>global</strong> and initialize them immediately. If they require more complex operations to set/clean up, I add functions named <strong>StructName_Init</strong> and <strong>StructName_Quit</strong> that should be called first and last when using the API.</p></li>
 </ul>
 
 <h3 id="function-definition-layout">function definition layout</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code class="language-c" data-lang="c"><span class="lnt"> 1</span><span class="lnt"> 2</span><span class="lnt"> 3</span><span class="lnt"> 4</span><span class="lnt"> 5</span><span class="lnt"> 6</span><span class="lnt"> 7</span><span class="lnt"> 8</span><span class="lnt"> 9</span><span class="lnt">10</span><span class="lnt">11</span><span class="lnt">12</span><span class="lnt">13</span><span class="lnt">14</span><span class="lnt">15</span><span class="lnt">16</span><span class="lnt">17</span><span class="lnt">18</span><span class="lnt">19</span><span class="lnt">20</span><span class="lnt">21</span></code></pre></td>
+<pre class="chroma"><code class="language-c" data-lang="c"><span class="lnt"> 1</span><span class="lnt"> 2</span><span class="lnt"> 3</span><span class="lnt"> 4</span><span class="lnt"> 5</span><span class="lnt"> 6</span><span class="lnt"> 7</span><span class="lnt"> 8</span><span class="lnt"> 9</span><span class="lnt">10</span><span class="lnt">11</span><span class="lnt">12</span><span class="lnt">13</span><span class="lnt">14</span><span class="lnt">15</span><span class="lnt">16</span><span class="lnt">17</span><span class="lnt">18</span><span class="lnt">19</span><span class="lnt">20</span></code></pre></td>
 <td class="lntd">
 <pre class="chroma"><code class="language-c" data-lang="c"><span class="n">Foobar</span> <span class="o">*</span><span class="nf">Foobar_Create</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
 <span class="p">{</span>
@@ -578,10 +632,9 @@
         <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
     <span class="p">}</span>
 
-    <span class="c1">// Variable declarations and initializations
-</span><span class="c1"></span>    <span class="kt">int</span> <span class="n">foo</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-    <span class="kt">int</span> <span class="n">bar</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-    <span class="n">Foobar</span> <span class="o">*</span><span class="n">this</span> <span class="o">=</span> <span class="nb">NULL</span><span class="o">:</span>
+    <span class="c1">// Variable declarations
+</span><span class="c1"></span>    <span class="kt">int</span> <span class="n">foo</span><span class="p">,</span> <span class="n">bar</span><span class="p">;</span>
+    <span class="n">Foobar</span> <span class="o">*</span><span class="n">this</span><span class="p">;</span>
 
     <span class="c1">// Processing
 </span><span class="c1"></span>    <span class="n">foo</span> <span class="o">=</span> <span class="p">...</span>
@@ -603,7 +656,7 @@
 <li>Return</li>
 </ul>
 
-<p>I used to try to avoid compound literals whenever possible due to inconsistencies in the MSVC implementation, but I believe that most of the C99 spec is now supported (minus variable-length stack-allocated arrays) so I&rsquo;m currently reviewing my stance.</p>
+<p>The sanity check section should be omitted in static functions.</p>
 
 <h2 id="closing">Closing</h2>
 
